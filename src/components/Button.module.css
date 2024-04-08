@@ -14,6 +14,11 @@
   background-color: var(--color-brand--3);
 }
 
+.btn:disabled {
+  cursor: progress;
+  background-color: lightgreen;
+}
+
 .primary {
   font-weight: 700;
   background-color: var(--color-brand--2);

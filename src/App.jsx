@@ -10,6 +10,8 @@ import { AuthProvider } from "./Contexts/FakeAuthContext";
 import ProtectedRoute from "./Pages/ProtectedRoute";
 import SpinnerFullPage from "./components/SpinnerFullPage";
 import SignUp from "./Pages/SignUp";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Homepage = lazy(() => import("./Pages/Homepage"));
 const Product = lazy(() => import("./Pages/Product"));
@@ -21,6 +23,13 @@ const PageNotFound = lazy(() => import("./Pages/PageNotFound"));
 function App() {
   return (
     <AuthProvider>
+      <ToastContainer
+        position="top-center"
+        autoClose={2000}
+        closeOnClick
+        pauseOnHover
+        theme="colored"
+      />
       <CitiesProvider>
         <BrowserRouter>
           <Suspense fallback={<SpinnerFullPage />}>

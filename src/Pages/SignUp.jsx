@@ -10,14 +10,16 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { auth, fireDB } from "../firebase.config";
-import { Timestamp, addDoc, doc, collection, setDoc } from "firebase/firestore";
+import { Timestamp, doc, collection, setDoc } from "firebase/firestore";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 function SignUp() {
   const [fireBaseSuccMessage, setFireBaseSuccMessage] = useState("");
   const [fireBaseError, setFireBaseError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const { register, formState, isLoading, handleSubmit, reset } = useForm();
+  const { register, formState, handleSubmit, reset } = useForm();
   const { errors } = formState;
 
   const navigate = useNavigate();
@@ -40,51 +42,104 @@ function SignUp() {
     }
   };
 
-  function onSubmit({ fullName, email, password }) {
-    console.log(fullName, email, password);
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        updateProfile(auth.currentUser, {
-          displayName: fullName,
-        });
+  // function onSubmit({ fullName, email, password }) {
+  //   console.log(fullName, email, password);
+  //   createUserWithEmailAndPassword(auth, email, password)
+  //     .then((userCredential) => {
+  //       updateProfile(auth.currentUser, {
+  //         displayName: fullName,
+  //       });
 
-        const us = userCredential.user;
-        const user = {
-          name: fullName,
-          uid: us.uid,
-          email: us.email,
-          time: Timestamp.now(),
-        };
+  //       const us = userCredential.user;
+  //       const user = {
+  //         name: fullName,
+  //         uid: us.uid,
+  //         email: us.email,
+  //         time: Timestamp.now(),
+  //       };
 
-        console.log(user);
-        addUser(user);
+  //       console.log(user);
+  //       addUser(user);
 
-        setFireBaseSuccMessage("Account created successfully");
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000);
-      })
+  //       setFireBaseSuccMessage("Account created successfully");
+  //       setTimeout(() => {
+  //         navigate("/login");
+  //       }, 2000);
+  //     })
 
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        if (errorCode.includes("auth/email-already-in-use")) {
-          setFireBaseError("Email Already in use, Try another one");
-        }
-      });
+  //     .catch((error) => {
+  //       const errorCode = error.code;
+  //       const errorMessage = error.message;
+  //       if (errorCode.includes("auth/email-already-in-use")) {
+  //         setFireBaseError("Email Already in use, Try another one");
+  //       }
+  //     });
+  // }
+
+  async function onSubmit({ fullName, email, password }) {
+    try {
+      setIsLoading(true);
+      console.log(fullName, email, password);
+
+      // Create user with email and password
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      // Update user profile with full name
+      await updateProfile(auth.currentUser, { displayName: fullName });
+
+      // Construct user object
+      const user = {
+        name: fullName,
+        uid: userCredential.user.uid,
+        email: userCredential.user.email,
+        time: Timestamp.now(),
+      };
+
+      console.log("User:", user);
+
+      addUser(user);
+
+      setFireBaseSuccMessage("Account created successfully");
+      toast.success("Account Successfully created");
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
+      setIsLoading(false);
+      reset();
+    } catch (error) {
+      setIsLoading(false);
+      console.error("Authentication error:", error);
+      if (error.code.includes("auth/email-already-in-use")) {
+        toast.error("Email Already in use, Try another one");
+      } else {
+        // Handle other authentication errors
+        toast.error("An error occurred. Please try again later.");
+      }
+      // toast.error(error.message);
+      reset();
+    }
   }
 
   return (
     <div className={styles.mainbox}>
       <div className={styles.formBox}>
         <Logo />
-        <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+        <form
+          className={styles.form}
+          onSubmit={handleSubmit(onSubmit)}
+          disable={isLoading}
+        >
           <div className={styles.formDiv}>
             <label htmlFor="fullName">Full Name</label>
             <input
               type="text"
               placeholder="Enter Full Name"
               id="fullName"
+              disabled={isLoading}
               {...register("fullName", { required: "This field is required" })}
             />
             {errors.fullName && (
@@ -97,6 +152,7 @@ function SignUp() {
               type="email"
               placeholder="Enter Email Id"
               id="email"
+              disabled={isLoading}
               {...register("email", {
                 required: "This field is required",
                 pattern: {
@@ -115,6 +171,7 @@ function SignUp() {
               type="password"
               placeholder="Enter Password"
               id="password"
+              disabled={isLoading}
               {...register("password", {
                 required: "This field is required",
                 minLength: {
@@ -129,8 +186,8 @@ function SignUp() {
           </div>
 
           <div className={styles.btnGroup}>
-            <Button type="primary" disable={isLoading}>
-              SignUp
+            <Button type="primary" disabled={isLoading}>
+              {isLoading ? "Loading Please wait" : "SignUp"}
             </Button>
           </div>
 
