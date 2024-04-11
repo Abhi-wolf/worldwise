@@ -4,19 +4,13 @@ import Logo from "../components/Logo";
 import Button from "../components/Button";
 import { useNavigate } from "react-router-dom";
 
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  updateProfile,
-} from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth, fireDB } from "../firebase.config";
 import { Timestamp, doc, collection, setDoc } from "firebase/firestore";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
 function SignUp() {
-  const [fireBaseSuccMessage, setFireBaseSuccMessage] = useState("");
-  const [fireBaseError, setFireBaseError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const { register, formState, handleSubmit, reset } = useForm();
@@ -41,40 +35,6 @@ function SignUp() {
       console.log(err);
     }
   };
-
-  // function onSubmit({ fullName, email, password }) {
-  //   console.log(fullName, email, password);
-  //   createUserWithEmailAndPassword(auth, email, password)
-  //     .then((userCredential) => {
-  //       updateProfile(auth.currentUser, {
-  //         displayName: fullName,
-  //       });
-
-  //       const us = userCredential.user;
-  //       const user = {
-  //         name: fullName,
-  //         uid: us.uid,
-  //         email: us.email,
-  //         time: Timestamp.now(),
-  //       };
-
-  //       console.log(user);
-  //       addUser(user);
-
-  //       setFireBaseSuccMessage("Account created successfully");
-  //       setTimeout(() => {
-  //         navigate("/login");
-  //       }, 2000);
-  //     })
-
-  //     .catch((error) => {
-  //       const errorCode = error.code;
-  //       const errorMessage = error.message;
-  //       if (errorCode.includes("auth/email-already-in-use")) {
-  //         setFireBaseError("Email Already in use, Try another one");
-  //       }
-  //     });
-  // }
 
   async function onSubmit({ fullName, email, password }) {
     try {
@@ -103,7 +63,6 @@ function SignUp() {
 
       addUser(user);
 
-      setFireBaseSuccMessage("Account created successfully");
       toast.success("Account Successfully created");
       setTimeout(() => {
         navigate("/login");

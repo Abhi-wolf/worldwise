@@ -1,37 +1,26 @@
 import { useParams } from "react-router-dom";
 import styles from "./City.module.css";
-import { useCities } from "../Contexts/CitiesContext";
 import { useEffect, useState } from "react";
 import Spinner from "./Spinner";
 import BackButton from "./BackButton";
-import {
-  collection,
-  getDoc,
-  getDocs,
-  doc,
-  addDoc,
-  deleteDoc,
-  updateDoc,
-} from "firebase/firestore";
+import { getDoc, doc } from "firebase/firestore";
 
 import { fireDB } from "../firebase.config";
 import { useAuthContext } from "../Contexts/FakeAuthContext";
 
 const dateFormate = (date) =>
   new Intl.DateTimeFormat("en", {
-    day: "numeric",
     month: "long",
+    day: "numeric",
     year: "numeric",
     weekday: "long",
   }).format(new Date(date));
 
 const formatDate = (date) => {
+  // convert date to milliseconds and create a new date object
   date = new Date(date.seconds * 1000 + date.nanoseconds / 1000000);
-  console.log(" hello = ", date);
-  let formattedDate = date.toLocaleString();
-
-  formattedDate = dateFormate(formattedDate);
-  console.log(typeof formattedDate);
+  // formate date
+  let formattedDate = dateFormate(date);
   return formattedDate;
 };
 
@@ -53,7 +42,6 @@ function City() {
           console.log("Document data:", docSnap.data());
           setCurrCity({ ...docSnap.data() });
         } else {
-          // docSnap.data() will be undefined in this case
           console.log("No such document!");
         }
         setIsLoading(false);
@@ -63,8 +51,6 @@ function City() {
     },
     [id]
   );
-
-  // const { cityName, emoji, date, notes } = currentCity;
 
   if (isLoading) return <Spinner />;
 

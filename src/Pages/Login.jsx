@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { auth } from "../firebase.config";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 import { useAuthContext } from "../Contexts/FakeAuthContext";
 import PageNav from "../components/PageNav";
@@ -11,26 +11,12 @@ import Button from "../components/Button";
 import { toast } from "react-toastify";
 
 export default function Login() {
-  // PRE-FILL FOR DEV PURPOSES
-  // const [email, setEmail] = useState("jack@example.com");
-  // const [password, setPassword] = useState("qwerty");
-
   const { register, formState, handleSubmit, reset } = useForm();
   const { errors } = formState;
   const [isLoading, setIsLoading] = useState(false);
 
   const { login, isAuthenticated } = useAuthContext();
   const navigate = useNavigate();
-
-  // function onSubmit({ email, password }) {
-  //   // console.log(email, password);
-
-  //   signInWithEmailAndPassword(auth, email, password).then((userCredential) => {
-  //     const user = userCredential.user;
-  //     console.log(user);
-  //     login(user);
-  //   });
-  // }
 
   async function onSubmit({ email, password }) {
     try {
@@ -73,6 +59,7 @@ export default function Login() {
       }
       // reset();
       setIsLoading(false);
+      reset();
     }
   }
 
