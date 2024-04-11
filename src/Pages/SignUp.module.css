@@ -68,3 +68,12 @@
     color: red;
     padding: 0.2rem 0 0 1rem;
 }
+
+
+.signupgooglebtn {
+    width: 70%;
+}
+
+.signupgooglebtn button {
+    width: 100%;
+}

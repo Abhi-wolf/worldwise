@@ -1,6 +1,6 @@
 .btn {
   color: inherit;
-  text-transform: uppercase;
+  text-transform: capitalize;
   padding: 0.8rem 1.6rem;
   font-family: inherit;
   font-size: 1.5rem;
@@ -24,6 +24,15 @@
   background-color: var(--color-brand--2);
   color: var(--color-dark--1);
 }
+
+.secondary {
+  font-weight: 700;
+  background-color: var(--color-brand--2);
+  color: var(--color-dark--1);
+  width: full;
+}
+
+
 
 .back {
   font-weight: 600;

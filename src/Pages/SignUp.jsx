@@ -4,14 +4,21 @@ import Logo from "../components/Logo";
 import Button from "../components/Button";
 import { useNavigate } from "react-router-dom";
 
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  updateProfile,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
 import { auth, fireDB } from "../firebase.config";
 import { Timestamp, doc, collection, setDoc } from "firebase/firestore";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { useAuthContext } from "../Contexts/FakeAuthContext";
 
 function SignUp() {
   const [isLoading, setIsLoading] = useState(false);
+  const { login, isAuthenticated } = useAuthContext();
 
   const { register, formState, handleSubmit, reset } = useForm();
   const { errors } = formState;
@@ -32,7 +39,7 @@ function SignUp() {
       await setDoc(userDocRef, user);
       addCollection(user.uid);
     } catch (err) {
-      console.log("err : ", err);
+      console.log(err);
     }
   };
 
@@ -81,6 +88,21 @@ function SignUp() {
       // toast.error(error.message);
       reset();
     }
+  }
+
+  function handleSignUpWithGoogle() {
+    let google_provider = new GoogleAuthProvider();
+    signInWithPopup(auth, google_provider)
+      .then((res) => {
+        console.log("google signin response ", res.user);
+        login(res.user);
+        toast.success("Signed Up Successfully");
+        navigate("/app");
+      })
+      .catch((err) => {
+        console.log("sign in with google error : ", err);
+        toast.error(err);
+      });
   }
 
   return (
@@ -149,16 +171,22 @@ function SignUp() {
               {isLoading ? "Loading Please wait" : "SignUp"}
             </Button>
           </div>
-
-          <div className={styles.loginMess}>
-            <p>
-              Aleardy have an account?{" "}
-              <span onClick={() => navigate("/login", { replace: true })}>
-                Sign In
-              </span>
-            </p>
-          </div>
         </form>
+
+        <div className={styles.signupgooglebtn}>
+          <Button type="secondary" onClick={handleSignUpWithGoogle}>
+            SignIn with Google
+          </Button>
+        </div>
+
+        <div className={styles.loginMess}>
+          <p>
+            Aleardy have an account?{" "}
+            <span onClick={() => navigate("/login", { replace: true })}>
+              Sign In
+            </span>
+          </p>
+        </div>
       </div>
     </div>
   );

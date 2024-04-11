@@ -2,7 +2,11 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { auth } from "../firebase.config";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+} from "firebase/auth";
 
 import { useAuthContext } from "../Contexts/FakeAuthContext";
 import PageNav from "../components/PageNav";
@@ -34,6 +38,7 @@ export default function Login() {
 
       // Perform further actions (e.g., login)
       login(user);
+      console.log(user);
       toast.success("Logged in Successfully");
       setIsLoading(false);
       // reset();
@@ -63,6 +68,20 @@ export default function Login() {
     }
   }
 
+  function handleSignUpWithGoogle() {
+    let google_provider = new GoogleAuthProvider();
+    signInWithPopup(auth, google_provider)
+      .then((res) => {
+        console.log("google signin response ", res.user);
+        login(res.user);
+        toast.success("Signed Up Successfully");
+      })
+      .catch((err) => {
+        console.log("sign in with google error : ", err);
+        toast.error(err);
+      });
+  }
+
   useEffect(
     function () {
       if (isAuthenticated) navigate("/app", { replace: true });
@@ -73,42 +92,59 @@ export default function Login() {
   return (
     <main className={styles.login}>
       <PageNav />
-      <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-        <div className={styles.row}>
-          <label htmlFor="email">Email address</label>
-          <input
-            type="email"
-            id="email"
-            disabled={isLoading}
-            placeholder="Email"
-            {...register("email", { required: "This field is required" })}
-          />
+      <div className={styles.loginDiv}>
+        <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+          <div className={styles.row}>
+            <label htmlFor="email">Email address</label>
+            <input
+              type="email"
+              id="email"
+              disabled={isLoading}
+              placeholder="Email"
+              {...register("email", { required: "This field is required" })}
+            />
 
-          {errors.email && (
-            <p className={styles.errormsg}>{errors.email.message}</p>
-          )}
-        </div>
+            {errors.email && (
+              <p className={styles.errormsg}>{errors.email.message}</p>
+            )}
+          </div>
 
-        <div className={styles.row}>
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            disabled={isLoading}
-            placeholder="Password"
-            {...register("password", { required: "This field is required" })}
-          />
-          {errors.password && (
-            <p className={styles.errormsg}>{errors.password.message}</p>
-          )}
-        </div>
+          <div className={styles.row}>
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              disabled={isLoading}
+              placeholder="Password"
+              {...register("password", { required: "This field is required" })}
+            />
+            {errors.password && (
+              <p className={styles.errormsg}>{errors.password.message}</p>
+            )}
+          </div>
 
-        <div>
-          <Button type="primary" disabled={isLoading}>
-            Login
+          <div>
+            <Button type="primary" disabled={isLoading}>
+              Login
+            </Button>
+          </div>
+        </form>
+
+        <div className={styles.signingooglebtn}>
+          <Button type="secondary" onClick={handleSignUpWithGoogle}>
+            SignIn with Google
           </Button>
         </div>
-      </form>
+
+        <div className={styles.loginMess}>
+          <p>
+            Don't have an account?{" "}
+            <span onClick={() => navigate("/signup", { replace: true })}>
+              Sign Up
+            </span>
+          </p>
+        </div>
+      </div>
     </main>
   );
 }

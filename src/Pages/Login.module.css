@@ -6,29 +6,68 @@
   min-height: calc(100vh - 5rem);
 }
 
-.form {
+.loginDiv {
   background-color: var(--color-dark--2);
   border-radius: 7px;
   padding: 2rem 3rem;
   width: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   gap: 2rem;
+   width: 55rem;
+   margin: 8rem auto;
+}
 
 
-  /* Different from other form */
-  width: 55rem;
-  margin: 8rem auto;
+.form {
+  /* background-color: var(--color-dark--2); */
+  /* border-radius: 7px; */
+  /* padding: 2rem 3rem; */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+}
+
+.signingooglebtn{
+  width: 80%;
+}
+
+.signingooglebtn button{
+  width: 100%;
+  margin-top: 1.5rem;
 }
 
 .row {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  width: 100%;
 }
 
 .errormsg {
   color: red;
   font-weight:bold;
   font: italic;
+}
+
+
+.loginMess {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+.loginMess span{
+  text-decoration: underline;
+  color: lightblue;
+}
+
+.loginMess span:hover {
+  cursor: pointer;
 }
