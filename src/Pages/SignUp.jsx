@@ -32,7 +32,7 @@ function SignUp() {
       await setDoc(userDocRef, user);
       addCollection(user.uid);
     } catch (err) {
-      console.log(err);
+      console.log("err : ", err);
     }
   };
 
