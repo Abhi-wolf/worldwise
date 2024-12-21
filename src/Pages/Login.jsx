@@ -13,6 +13,7 @@ import PageNav from "../components/PageNav";
 import styles from "./Login.module.css";
 import Button from "../components/Button";
 import { toast } from "react-toastify";
+import { sendEvent } from "../libs/analyticFeedback";
 
 export default function Login() {
   const { register, formState, handleSubmit, reset } = useForm();
@@ -34,18 +35,26 @@ export default function Login() {
 
       // If sign-in is successful, get the user object
       const user = userCredential.user;
-      console.log("User:", user);
+      // console.log("User:", user);
 
       // Perform further actions (e.g., login)
       login(user);
-      console.log(user);
+
+      const event = {
+        eventName: "logins", // required
+        domain: "worldwise-eta.vercel.app",
+        eventDescription: `${email} logged in`,
+      };
+      await sendEvent(event);
+
+      // console.log(user);
       toast.success("Logged in Successfully");
       setIsLoading(false);
       // reset();
     } catch (error) {
       // Handle any errors that occur during sign-in
       console.error("Sign-in error:", error);
-      console.log(error.code);
+      // console.log(error.code);
 
       // Determine error code and display appropriate message
       if (
@@ -72,12 +81,12 @@ export default function Login() {
     let google_provider = new GoogleAuthProvider();
     signInWithPopup(auth, google_provider)
       .then((res) => {
-        console.log("google signin response ", res.user);
+        // console.log("google signin response ", res.user);
         login(res.user);
         toast.success("Signed Up Successfully");
       })
       .catch((err) => {
-        console.log("sign in with google error : ", err);
+        // console.log("sign in with google error : ", err);
         toast.error(err);
       });
   }

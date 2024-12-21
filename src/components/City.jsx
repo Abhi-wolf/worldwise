@@ -39,10 +39,10 @@ function City() {
       async function fetchCity() {
         const docSnap = await getDoc(subcollectionDocRef);
         if (docSnap.exists()) {
-          console.log("Document data:", docSnap.data());
+          // console.log("Document data:", docSnap.data());
           setCurrCity({ ...docSnap.data() });
         } else {
-          console.log("No such document!");
+          // console.log("No such document!");
         }
         setIsLoading(false);
       }

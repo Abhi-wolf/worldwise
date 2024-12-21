@@ -12,6 +12,7 @@ import SpinnerFullPage from "./components/SpinnerFullPage";
 import SignUp from "./Pages/SignUp";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { FeedbackForm } from "./Pages/FeedbackForm";
 
 const Homepage = lazy(() => import("./Pages/Homepage"));
 const Product = lazy(() => import("./Pages/Product"));
@@ -58,6 +59,7 @@ function App() {
           </Suspense>
         </BrowserRouter>
       </CitiesProvider>
+      <FeedbackForm />
     </AuthProvider>
   );
 }

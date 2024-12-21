@@ -15,6 +15,8 @@ import { Timestamp, doc, collection, setDoc } from "firebase/firestore";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useAuthContext } from "../Contexts/FakeAuthContext";
+import { sendEvent } from "../libs/analyticFeedback";
+const domain = import.meta.env.VITE_FRONTEND_URL;
 
 function SignUp() {
   const [isLoading, setIsLoading] = useState(false);
@@ -46,7 +48,7 @@ function SignUp() {
   async function onSubmit({ fullName, email, password }) {
     try {
       setIsLoading(true);
-      console.log(fullName, email, password);
+      // console.log(fullName, email, password);
 
       // Create user with email and password
       const userCredential = await createUserWithEmailAndPassword(
@@ -54,6 +56,12 @@ function SignUp() {
         email,
         password
       );
+
+      await sendEvent({
+        eventName: "New User", // required
+        domain,
+        eventDescription: `${email} registered`,
+      });
 
       // Update user profile with full name
       await updateProfile(auth.currentUser, { displayName: fullName });
@@ -66,7 +74,7 @@ function SignUp() {
         time: Timestamp.now(),
       };
 
-      console.log("User:", user);
+      // console.log("User:", user);
 
       addUser(user);
 
@@ -94,13 +102,15 @@ function SignUp() {
     let google_provider = new GoogleAuthProvider();
     signInWithPopup(auth, google_provider)
       .then((res) => {
-        console.log("google signin response ", res.user);
+        // console.log("google signin response ", res.user);
+
         login(res.user);
         toast.success("Signed Up Successfully");
+
         navigate("/app");
       })
       .catch((err) => {
-        console.log("sign in with google error : ", err);
+        // console.log("sign in with google error : ", err);
         toast.error(err);
       });
   }

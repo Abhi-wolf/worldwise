@@ -45,7 +45,7 @@ function AuthProvider({ children }) {
         console.log("signed out successfully");
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
       });
     dispatch({ type: "logout" });
   }

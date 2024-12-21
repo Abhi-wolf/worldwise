@@ -15,7 +15,7 @@ function Cityitem({ city }) {
 
   function handleClick(e) {
     e.preventDefault();
-    console.log(id);
+    // console.log(id);
     deleteCity(id);
   }
 

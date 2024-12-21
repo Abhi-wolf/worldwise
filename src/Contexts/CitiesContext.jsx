@@ -17,6 +17,7 @@ import {
   deleteDoc,
   updateDoc,
 } from "firebase/firestore";
+import { sendEvent } from "../libs/analyticFeedback";
 
 const COLLECTION_NAME = "cities";
 
@@ -77,7 +78,7 @@ function CitiesProvider({ children }) {
 
   const { user } = useAuthContext();
   //   console.log(user);
-  if (user) console.log(user.uid);
+  // if (user) console.log(user.uid);
 
   useEffect(
     function () {
@@ -92,10 +93,10 @@ function CitiesProvider({ children }) {
               dest.push(doc.data());
             });
             dispatch({ type: "cities/loaded", payload: dest });
-            console.log(dest);
+            // console.log(dest);
           })
           .catch((err) => {
-            console.log(err);
+            console.error(err);
           });
       }
     },
@@ -135,6 +136,13 @@ function CitiesProvider({ children }) {
         id,
       };
 
+      const event = {
+        eventName: "New city ", // required
+        domain: "worldwise-eta.vercel.app",
+        eventDescription: `${user.uid} added new city`,
+      };
+      await sendEvent(event);
+
       dispatch({ type: "city/created", payload: newCity });
     } catch (error) {
       dispatch({ type: "rejected", payload: error.message });
@@ -147,6 +155,14 @@ function CitiesProvider({ children }) {
     try {
       //   await fireDB.collection(COLLECTION_NAME).doc(id).delete();
       await deleteDoc(subcollectionDocRef);
+
+      const event = {
+        eventName: "City Deleted ", // required
+        domain: "worldwise-eta.vercel.app",
+        eventDescription: `${user.uid} deleted a city`,
+      };
+      await sendEvent(event);
+
       dispatch({ type: "city/deleted", payload: id });
     } catch (error) {
       dispatch({ type: "rejected", payload: error.message });
